@@ -24,7 +24,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         src/mainwindow.cpp
-        src/tensor.h src/tensor.cpp
+
         src/testing/UnitTest.cpp
         src/ConsoleInterface.h
         src/ConsoleInterface.cpp
@@ -38,6 +38,11 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/Conv.h src/Conv.cpp
         src/Pool.h src/Pool.cpp
         src/Activation.h src/Activation.cpp
+        src/Tensor.h src/Tensor.cpp
+        src/BatchTensor.h src/BatchTensor.cpp
+        src/Tensor3D.h src/Tensor3D.cpp
+        src/Tensor1D.h src/Tensor1D.cpp
+        src/Tensor2D.h src/Tensor2D.cpp
 
     )
 # Define target properties for Android with Qt 6 as:

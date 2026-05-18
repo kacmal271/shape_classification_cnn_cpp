@@ -5,15 +5,13 @@
 
 class Tensor
 {
+  public:
+
+    using NeuronType = int;
+
+    using vectorNeuronType = std::vector<NeuronType>;
+
   private:
-
-    size_t batchSize {};
-
-    size_t height {};
-
-    size_t width {};
-
-    size_t depth {};
 
     std::vector<NeuronType> values {};
 
