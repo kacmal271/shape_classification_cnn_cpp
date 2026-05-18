@@ -1,0 +1,40 @@
+
+///////////////////////////////////////////////////////////////////////////////
+// RESOURCES
+
+[-] backprop 1: https://pavisj.medium.com/convolutions-and-backpropagations-46026a8f5d2c
+
+[-] backprop 2: https://www.youtube.com/watch?v=i94OvYb6noo
+
+[-] backprop code: https://github.com/vcoz17/Back-Propagation-in-CNN/blob/master/backpropagation_in_cnn.py#L93
+
+///////////////////////////////////////////////////////////////////////////////
+// TODO
+
+[-] #07 argc argv training
+
+	cmd -> cd /project -> program.exe 1 % tworzy plik z parametrami generowanymi losowo
+	cmd -> cd /project -> program.exe 2 % robi backpropagation z danymi z folderu
+
+[-] #06 interfejs
+
+	1. wprowadzanie obrazka drag'n'drop
+	2. wyskakuje okno z wynikami 8 klas figur
+
+[-] #03 backprop
+
+	translate it into comments
+	
+	then rewrite as C++ code
+
+[-] #02.01 feed forward
+
+	qt api for images
+
+	feed batch of images (4d tensor)
+	conv: each (3d tensor) separately
+	pool: each (3d tensor separately)
+
+[+] #02 create/find train+test images
+
+[+] #01 create: Qt Widgets Project
