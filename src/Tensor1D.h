@@ -12,7 +12,11 @@ class Tensor1D : public Tensor
 
   public:
 
-    using Tensor::Tensor;
+    Tensor1D(vectorNeuronType values, vectorSizeT dims);
+
+    size_t size() const override;
+
+    size_t copyDepth() const;
 };
 
 #endif // TENSOR1D_H

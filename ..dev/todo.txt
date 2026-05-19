@@ -34,6 +34,14 @@
 	feed batch of images (4d tensor)
 	conv: each (3d tensor) separately
 	pool: each (3d tensor separately)
+	
+	[+] isImageCompatible
+	[-] transpose_width_depth -> as 2D problem
+			debug TensorTest -> transpose_width_depth
+			problem: unexpected output to console
+	[-] matrix multiplication
+			prepare reshaping functions
+			prepare tranposition functions
 
 [+] #02 create/find train+test images
 

@@ -1,7 +1,7 @@
 #ifndef FUNCTION_TEST_H
 #define FUNCTION_TEST_H
 
-#include "../testing/UnitTest.h"
+#include "../Testing/UnitTest.h"
 
 inline void test(Testing::UnitTest *_test)
 {

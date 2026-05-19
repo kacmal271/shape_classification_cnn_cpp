@@ -1,7 +1,7 @@
 #include "./src/mainwindow.h"
 
-#include "./src/helper/test.h"
-#include "./src/testing/TensorTest.h"
+#include "./src/Helper/test.h"
+#include "./src/Testing/TensorTest.h"
 
 #include <QApplication>
 

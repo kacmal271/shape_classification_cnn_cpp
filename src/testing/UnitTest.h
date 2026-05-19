@@ -7,7 +7,7 @@
 /// UnitTest
 
 #include "../ConsoleInterface.h"
-#include "../helper/declarations.h"
+#include "../Helper/declarations.h"
 
 namespace Testing
 {

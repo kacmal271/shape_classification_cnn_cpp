@@ -16,14 +16,14 @@ class ConsoleInterface : Interface
     //*****************************************************************************
 
     template <typename T>
-    void log(T message = T {}, bool prependNewLine = true)
+    void log(T message = T {}, bool appendNewLine = true)
     {
-      if (prependNewLine)
+      std::cout << message;
+
+      if (appendNewLine)
       {
         std::cout << std::endl;
       }
-
-      std::cout << message;
     }
     
   protected:

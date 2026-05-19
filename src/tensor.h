@@ -1,7 +1,10 @@
 #ifndef TENSOR_H
 #define TENSOR_H
 
-#include "./helper/declarations.h"
+#include <vector>
+#include <memory>
+
+#include "./Helper/declarations.h"
 
 class Tensor
 {
@@ -11,41 +14,26 @@ class Tensor
 
     using vectorNeuronType = std::vector<NeuronType>;
 
-  private:
+  protected:
 
-    std::vector<NeuronType> values {};
+    vectorNeuronType values {};
 
   public:
 
-    Tensor(vectorNeuronType values,
-           vectorSizeT dims);
+    Tensor(vectorNeuronType values) : values(values) {};
 
-    NeuronType & operator() (size_t bI, size_t hI, size_t wI, size_t dI);
+    // required by: std::unique_ptr
+    // otherwise: undefined behavior
+    virtual ~Tensor() = default;
 
-    void reshape(size_t newBatchSize,
-                 size_t newHeight,
-                 size_t newWidth,
-                 size_t newDepth);
+    NeuronType & operator[] (size_t index);
 
-    Tensor copyDepth(size_t batchIndex,
-                     size_t heightIndex,
-                     size_t widthIndex);
+    virtual size_t size() const = 0;
 
-    void transpose_width_depth();
+    vectorNeuronType const & readValues() const;
 
-    //*****************************************************************************
-
-    constexpr size_t plane_size()
-    {
-      return width * depth;
-    }
-
-    //*****************************************************************************
-
-    constexpr size_t cube_size()
-    {
-      return height * plane_size();
-    }
+    vectorNeuronType::iterator begin();
+    vectorNeuronType::iterator end();
 
 };
 

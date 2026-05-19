@@ -2,7 +2,7 @@
 #define TENSORTEST_H
 
 #include "./UnitTest.h"
-#include "../tensor.h"
+#include "../BatchTensor.h"
 
 namespace Testing
 {

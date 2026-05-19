@@ -1,6 +1,7 @@
 #ifndef HELPER_DECLARATIONS_H
 #define HELPER_DECLARATIONS_H
 
+#include <memory>
 #include <vector>
 
 using vectorSizeT = std::vector<size_t>;
