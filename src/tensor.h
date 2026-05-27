@@ -27,10 +27,15 @@ class Tensor
     virtual ~Tensor() = default;
 
     NeuronType & operator[] (size_t index);
+    NeuronType const & operator[] (size_t index) const;
 
     virtual size_t size() const = 0;
 
     vectorNeuronType const & readValues() const;
+
+    void fit(size_t & dimension,
+             size_t tensor_dimension,
+             size_t tensor_dimension_offset) const;
 
     vectorNeuronType::iterator begin();
     vectorNeuronType::iterator end();

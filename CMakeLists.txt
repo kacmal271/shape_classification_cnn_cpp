@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Charts)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -45,6 +46,11 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/Tensor1D.h src/Tensor1D.cpp
         src/Tensor2D.h src/Tensor2D.cpp
         src/Extended/Vector.h src/Extended/Vector.cpp
+        src/QHelper/QConsoleInterface.h src/QHelper/QConsoleInterface.cpp
+        src/Helper/definitions.h
+        src/ChartWindow.h src/ChartWindow.cpp src/ChartWindow.ui
+        src/Helper/declarations_q.h
+        src/QHelper/QTensorAdapter.h src/QHelper/QTensorAdapter.cpp
 
     )
 # Define target properties for Android with Qt 6 as:
@@ -66,6 +72,7 @@ else()
 endif()
 
 target_link_libraries(shape_classification_cnn_cpp PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(shape_classification_cnn_cpp PRIVATE Qt${QT_VERSION_MAJOR}::Charts)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

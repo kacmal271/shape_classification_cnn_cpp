@@ -2,6 +2,54 @@
 
 //*****************************************************************************
 
+bool Tensor1D::isSubspace(size_t z, size_t depth) const
+{
+  return 0 <= z && z + depth <= this->depth;
+}
+
+//*****************************************************************************
+
+Tensor1D Tensor1D::copySubdepth(size_t z, size_t depth) const
+{
+  if ( ! isSubspace(z, depth))
+  {
+    throw 1;
+  }
+
+  return {
+    vectorNeuronType (values.begin() + z, values.begin() + z + depth),
+    { depth }
+  };
+}
+
+//*****************************************************************************
+
+bool Tensor1D::isDepthCompatible(Tensor1D const & depth) const
+{
+  return this->depth == depth.depth;
+}
+
+//*****************************************************************************
+
+Tensor::NeuronType Tensor1D::dot(Tensor1D const & right) const
+{
+  if ( ! isDepthCompatible(right))
+  {
+    throw 1;
+  }
+
+  NeuronType dotProduct {};
+
+  for (size_t i = 0; i < values.size(); i++)
+  {
+    dotProduct += values[i] * right[i];
+  }
+
+  return dotProduct;
+}
+
+//*****************************************************************************
+
 size_t Tensor1D::size() const
 {
   return depth;

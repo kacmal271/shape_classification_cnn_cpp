@@ -2,6 +2,47 @@
 
 //*****************************************************************************
 
+Tensor3D BatchTensor::copySubcube(size_t batchIndex,
+                                  size_t y, size_t height,
+                                  size_t x, size_t width,
+                                  size_t z, size_t depth) const
+{
+  // what, max, offset
+  fit(height, this->height, y);
+  fit(width , this->width , x);
+  fit(depth , this->depth , z);
+
+  Tensor3D cube { copySubspace(batchIndex) };
+
+  return cube.copySubcube(y, height, x, width, z, depth);
+}
+
+//*****************************************************************************
+
+void BatchTensor::pad(size_t count, NeuronType value)
+{
+  size_t height_padded { height + 2 * count };
+  size_t width_padded  { width + 2 * count };
+
+  BatchTensor batch_padded {
+    vectorNeuronType {},
+    { 0, height_padded, width_padded, depth }
+  };
+
+  for (size_t b = 0; b < batchSize; b++)
+  {
+    Tensor3D cube { copySubspace(b) };
+
+    cube.pad(count, value);
+
+    batch_padded.pushCube(cube);
+  }
+
+  *this = batch_padded;
+}
+
+//*****************************************************************************
+
 size_t BatchTensor::size() const
 {
   return batchSize * this->Tensor3D::size();
@@ -18,7 +59,7 @@ Tensor3D BatchTensor::copySubspace(size_t batchIndex) const
     values.begin() + (batchIndex * cube_size) + cube_size
   };
 
-  // (not: explicit) Tensor3D()
+  // (not: explici5) Tensor3D()
   return { Tensor3D { values_local, { height, width, depth } } };
 }
 
@@ -58,11 +99,19 @@ BatchTensor::BatchTensor(vectorNeuronType values, vectorSizeT dims)
 
 //*****************************************************************************
 
-Tensor::NeuronType & BatchTensor::operator() (size_t batchIndex,
+Tensor::NeuronType& BatchTensor::operator()(size_t batchIndex,
                                             size_t heightIndex,
                                             size_t widthIndex,
                                             size_t depthIndex)
 {
+  if (batchIndex  > batchSize   ||
+      heightIndex > height      ||
+      widthIndex  > width       ||
+      depthIndex  > depth)
+  {
+    throw 1;
+  }
+
   batchIndex  *= this->Tensor3D::size();
   heightIndex *= this->Tensor2D::size();
   widthIndex  *= this->Tensor1D::size();
@@ -134,15 +183,6 @@ void BatchTensor::transpose_width_depth()
   reshape(batchSize, height, depth, width);
 }
 
-//*****************************************************************************
-
-bool BatchTensor::isCubeCompatible(Tensor3D const & cube) const
-{
-  // operator&& looks for -> 1st false and returns
-  return cube.copyDepth() == depth &&
-         cube.copyWidth() == width &&
-         cube.copyHeight() == height;
-}
 
 //*****************************************************************************
 

@@ -2,6 +2,96 @@
 
 //*****************************************************************************
 
+bool Tensor2D::isSubspace(size_t x, size_t width, size_t z, size_t depth) const
+{
+  return 0 <= x && x + width <= this->width &&
+         Tensor1D::isSubspace(z, depth);
+}
+
+//*****************************************************************************
+
+void Tensor2D::pushDepth(Tensor1D depth)
+{
+  if ( ! isDepthCompatible(depth))
+  {
+    throw 1;
+  }
+
+  values.insert(values.end(), depth.begin(), depth.end());
+
+  width++;
+}
+
+//*****************************************************************************
+
+Tensor2D Tensor2D::copySubplane(size_t x, size_t width,
+                                size_t z, size_t depth) const
+{
+  if ( ! isSubspace(x, width, z, depth))
+  {
+    // [todo] throw std::out_of_range
+
+    throw 1;
+  }
+
+  Tensor2D subplane {
+    vectorNeuronType {},
+    { 0, depth }
+  };
+
+  for (size_t w = 0; w < width; w++)
+  {
+    Tensor1D depth_tensor { copyDepth(x + w) };
+
+    Tensor1D subdepth { depth_tensor.copySubdepth(z, depth) };
+
+    subplane.pushDepth(subdepth);
+  }
+
+  return subplane;
+}
+
+//*****************************************************************************
+
+void Tensor2D::pad(size_t count, NeuronType value)
+{
+  size_t width_padded { width + 2 * count };
+
+  size_t size_padded { width_padded * depth };
+
+  Tensor2D plane_padded
+    {
+      vectorNeuronType ( size_padded, value ),
+      { width_padded, depth }
+    };
+
+  Extended::Vector::replace(
+    plane_padded.values,
+    depth * count, // depth * 1
+    depth * count + values.size(),
+    values);
+
+  *this = plane_padded;
+}
+
+//*****************************************************************************
+
+bool Tensor2D::isPlaneMultipliable(Tensor2D const & plane) const
+{
+  return width == plane.depth;
+}
+
+//*****************************************************************************
+
+bool Tensor2D::isPlaneCompatible(Tensor2D const & plane) const
+{
+  // operator&& looks for -> 1st false and returns
+  return plane.copyDepth() == depth &&
+         plane.copyWidth() == width;
+}
+
+//*****************************************************************************
+
 void Tensor2D::reshape(size_t newWidth,
                        size_t newDepth)
 {
@@ -64,9 +154,37 @@ size_t Tensor2D::size() const
 
 Tensor2D Tensor2D::operator* (Tensor2D const & right) const
 {
-  // matrix multiplication
+  if ( ! isPlaneMultipliable(right))
+  {
+    throw 1;
+  }
 
-  return *this;
+  Tensor2D left { *this };
+
+  Tensor2D activations {
+    vectorNeuronType(right.width * left.depth, NeuronType {}),
+    { right.width, left.depth}
+  };
+
+  // transposition -> makes -> multiplied vectors -> parallel to one another
+  left.transpose_width_depth();
+
+  for (size_t lw = 0; lw < left.width; lw++)
+  {
+    for (size_t rw = 0; rw < right.width; rw++)
+    {
+      Tensor1D leftDepth  { left  .copyDepth(lw) };
+      Tensor1D rightDepth { right .copyDepth(rw) };
+
+      NeuronType dotProduct { leftDepth.dot(rightDepth) };
+
+      // lw -> depth OFFSET transposed into width
+      // rw -> width OFFSET ( * depth transposed into width )
+      activations[lw + rw * left.width] = dotProduct;
+    }
+  }
+
+  return activations;
 }
 
 //*****************************************************************************

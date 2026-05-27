@@ -6,9 +6,6 @@
 ///
 /// UnitTest
 
-#include "../ConsoleInterface.h"
-#include "../Helper/declarations.h"
-
 namespace Testing
 {
   class UnitTest

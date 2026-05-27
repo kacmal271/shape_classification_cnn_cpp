@@ -3,6 +3,7 @@
 
 #include "./UnitTest.h"
 #include "../BatchTensor.h"
+#include "../QHelper/QConsoleInterface.h"
 
 namespace Testing
 {

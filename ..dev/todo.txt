@@ -6,19 +6,19 @@
 
 [-] backprop 2: https://www.youtube.com/watch?v=i94OvYb6noo
 
-[-] backprop code: https://github.com/vcoz17/Back-Propagation-in-CNN/blob/master/backpropagation_in_cnn.py#L93
+[-] backprop for CONV layer: https://www.youtube.com/watch?v=njlyOAiK_yE
+		there isnt a backprop for POOL or for NORM
+
+[-] backprop in python: https://github.com/vcoz17/Back-Propagation-in-CNN/blob/master/backpropagation_in_cnn.py
+		important: def loss, def train
+		[?] ask chatgpt for explaining why there is a backprop version for relu
 
 ///////////////////////////////////////////////////////////////////////////////
 // TODO
 
-[-] #07 argc argv training
+[+] #06 interfejs
 
-	cmd -> cd /project -> program.exe 1 % tworzy plik z parametrami generowanymi losowo
-	cmd -> cd /project -> program.exe 2 % robi backpropagation z danymi z folderu
-
-[-] #06 interfejs
-
-	1. wprowadzanie obrazka drag'n'drop
+	1. wprowadzanie obrazka file picker
 	2. wyskakuje okno z wynikami 8 klas figur
 
 [-] #03 backprop
@@ -26,23 +26,89 @@
 	translate it into comments
 	
 	then rewrite as C++ code
+	
+[-]	#02.01 qt api for images
+
+	QHelper::QTensorAdapter
+	
+	converting QImage -> Tensor
 
 [-] #02.01 feed forward
-
-	qt api for images
 
 	feed batch of images (4d tensor)
 	conv: each (3d tensor) separately
 	pool: each (3d tensor separately)
 	
 	[+] isImageCompatible
-	[-] transpose_width_depth -> as 2D problem
+	[+] transpose_width_depth -> as 2D problem
 			debug TensorTest -> transpose_width_depth
 			problem: unexpected output to console
-	[-] matrix multiplication
+	[+] matrix multiplication
 			prepare reshaping functions
 			prepare tranposition functions
-
+			
+			isCubeCompatible
+			isPlaneCompatible
+			isDepthCompatible
+			
+			make a test
+	[+] Tensor Tensor::pad(int)
+	
+			debug: BatchTensor::pad
+			expected dims: {2, 5, 5, 2}
+			expected vector size: 100
+			got dims: {4, 5, 5, 2}
+			got vector size: 134
+			
+			solved: heightIndex * Tensor2D::size() + Tensor2D::size(),
+			
+	[+] Tensor3D Tensor3D::subcube(...)
+			catch (int) console.log("unimplemented")
+			
+	[-]	adding bias vector
+			Tensor3D.operator+(Tensor1D)
+				depth = copyDepth(y, x)
+				depth += Tensor1D
+				empty.replaceAt(y, x)
+	
+	[-] Conv : Layer
+			Conv::filters -> BatchTensor {}
+			
+			tensor = Conv(tensor)
+			tensor = Pool(tensor) ...
+			
+			Conv::convolve(BatchTensor)
+			private: Conv::convolve_one(Tensor3D)
+			
+			create Tensor3D with dims: { 1, 12, 50176 }
+			transpose_width_depth => { 1, 50176, 12 }
+			reshape: { sqrt(50176), sqrt(...), 12 }
+			
+	[-]	Pool : Layer
+			tensor = Pool(tensor)
+			Tensor3D.subcube(x, size, y, size)
+			max(subcube.values)
+	
+	[-]	/src/relu.cpp
+			double relu(NeuronType x) { return std::max(0, x); }
+	
+	[-]	Activation
+			Activation::Activation(NeuronType (*) (NeuronType))
+			protected: NeuronType (* activator) (NeuronType)
+			
+	[-] ConvNet
+			ConvNet::ConvNet(initializer_list<Layer*>)
+			ConvNet::feedForward() -> std::vector<double>
+			ConvNet::backprop()
+			ConvNet::optimize() -> void
+				while(batch iterations)
+				feedForward()
+				backprop()
+			ConvNet::classify() -> std::vector<double>
+				wrapper for 1x feedForward
+			ConvNet::serialize("./parameters.csv") // saving parameters in file (space " " delim)
+			ConvNet::deserialize("./parameters.csv")
+			
 [+] #02 create/find train+test images
 
 [+] #01 create: Qt Widgets Project

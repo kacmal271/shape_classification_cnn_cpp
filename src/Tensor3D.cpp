@@ -2,6 +2,116 @@
 
 //*****************************************************************************
 
+bool Tensor3D::isSubspace(size_t y, size_t height,
+                          size_t x, size_t width,
+                          size_t z, size_t depth) const
+{
+  return 0 <= y && y + height <= this->height &&
+         Tensor2D::isSubspace(x, width, z, depth);
+}
+
+//*****************************************************************************
+
+Tensor3D Tensor3D::copySubcube(size_t y, size_t height,
+                               size_t x, size_t width,
+                               size_t z, size_t depth) const
+{
+  if ( ! isSubspace(y, height, x, width, z, depth))
+  {
+    // [todo] throw std::out_of_range
+
+    throw 1;
+  }
+
+  Tensor3D subcube {
+    vectorNeuronType {},
+    { 0, width, depth }
+  };
+
+  for (size_t h = 0; h < height; h++)
+  {
+    Tensor2D plane { copyPlane(y + h) };
+
+    Tensor2D subplane { plane.copySubplane(x, width, z, depth) };
+
+    subcube.pushPlane(subplane);
+  }
+
+  return subcube;
+}
+
+//*****************************************************************************
+
+void Tensor3D::replaceAt(size_t heightIndex, Tensor2D const & plane)
+{
+  if ( ! isPlaneCompatible(plane))
+  {
+    throw 2;
+  }
+
+  Extended::Vector::replace(
+    values,
+    heightIndex * Tensor2D::size(),
+    heightIndex * Tensor2D::size() + Tensor2D::size(),
+    plane.readValues());
+}
+
+//*****************************************************************************
+
+Tensor2D Tensor3D::createPlane(NeuronType value) const
+{
+  size_t size_ { width * depth };
+
+  return
+    {
+      vectorNeuronType ( size_, value ),
+      { width, depth }
+    };
+}
+
+//*****************************************************************************
+
+void Tensor3D::pushPlane(Tensor2D plane)
+{
+  if ( ! isPlaneCompatible(plane))
+  {
+    throw 1;
+  }
+
+  values.insert(values.end(), plane.begin(), plane.end());
+
+  height++;
+}
+
+//*****************************************************************************
+
+void Tensor3D::pad(size_t count, NeuronType value)
+{
+  size_t height_padded  { height + 2 * count };
+  size_t width_padded   { width + 2 * count };
+
+  size_t size_padded { height_padded * width_padded * depth };
+
+  Tensor3D cube_padded
+    {
+      vectorNeuronType ( size_padded, value ),
+      { height_padded, width_padded, depth }
+    };
+
+  for (size_t h = 0; h < height; h++)
+  {
+    Tensor2D plane { copyPlane(h) };
+
+    plane.pad(count, value);
+
+    cube_padded.replaceAt(h + count, plane);
+  }
+
+  *this = cube_padded;
+}
+
+//*****************************************************************************
+
 void Tensor3D::reshape(size_t newHeight,
                        size_t newWidth,
                        size_t newDepth)
@@ -77,6 +187,16 @@ void Tensor3D::transpose_width_depth()
   }
 
   reshape(height, depth, width);
+}
+
+//*****************************************************************************
+
+bool Tensor3D::isCubeCompatible(Tensor3D const & cube) const
+{
+  // operator&& looks for -> 1st false and returns
+  return cube.copyDepth() == depth &&
+         cube.copyWidth() == width &&
+         cube.copyHeight() == height;
 }
 
 //*****************************************************************************

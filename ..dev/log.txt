@@ -16,26 +16,36 @@ API used
 	CNN math -> C++/STL
 	File picker -> QFileDialog
 
-Layer::pad(int)
+Tensor::pad(int, value)
 
 	Tensor(tensor.width() + 2 * int, tensor.height() + 2 * int)
+	
+	Tensor3D::create_plane(T value)
+	
+	Tensor2D::pad(count, value)
 
 Conv
+
+	Conv::filters -> BatchTensor
+	
+		initialized with: 0 values
 
 	for each INPUT tensor
 	create a new OUTPUT tensor
 
-	Tensor output {  }
+	BatchTensor output {  }
 
-	for Tensor3D
+	foreach Tensor3D
 	
-		Tensor3D.convolve
+		Conv::convolve(BatchTensor input_images, BatchTensor filters)
 		
-	Tensor3D.convolve(Filter)
+			private: Conv::convolve_one(Tensor3D image, BatchTensor filters)
+		
+	Conv::convolve_one()
 	
-		for y = 0; h <= input.height - filter.copyDim()
+		for y = 0; y <= input.height - filter.copyDim()
 		
-			for x = 0; h <= input.width - filter.copyDim()
+			for x = 0; x <= input.width - filter.copyDim()
 		
 	// substring
 	Tensor3D::subcube(int y, int height, int x, int width, int z = 0, int depth = -1)
@@ -43,12 +53,12 @@ Conv
 		if depth == -1
 		
 			depth = this->depth
-	
-		subcube(height, width, depth)
 			
 		for h = y; h < y + height
 		
 			for w = x; x < x + width
+		
+				for d = z; d < z + depth
 	
 	// matrix mult
 	Tensor2D Tensor2D.operator*(Tensor2D)
@@ -91,18 +101,12 @@ Pool
 		create Tensor3D
 		
 		Tensor3D.pool(int (*) (int))
-	
-	for depth
-	
-		create Tensor2D
-		
-		Tensor2D.pool(int (*) (int))
 
 	for h = 0; h += step 
 	
 		for w = 0; w += step
 		
-		 Tensor2D.submatrix()
+			Tensor3D.subcube(...)
 
 /src/relu.cpp -> double relu(int x) { return std::max(0, int x); }
 
@@ -117,6 +121,16 @@ ConvNet
 	#include <initializer_list>
 
 	ConvNet({ Conv Activate Pool Conv Activate Pool Conv })
+	
+	std::vector<double> ConvNet::classify()
+	
+	void ConvNet::train(x, y, batch_size) // training parameters
+	
+	void ConvNet::serialize("./parameters.csv") // saving parameters -> file (space " " delimited)
+	
+	void ConvNet::deserialize("./parameters.csv")
+	
+	
 
 transpose_width_depth
 
@@ -124,6 +138,6 @@ transpose_width_depth
 
 BatchTensor
 
-	this is the main Tensor object
+	this is the main Tensor class
 	
 	Tensor3D, Tensor2D, Tensor1D are just auxiliary

@@ -24,6 +24,8 @@ class ConsoleInterface : Interface
       {
         std::cout << std::endl;
       }
+
+      std::cout << std::flush;
     }
     
   protected:
