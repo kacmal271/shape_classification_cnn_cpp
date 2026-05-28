@@ -4,182 +4,200 @@ using namespace Testing;
 
 //*****************************************************************************
 
-void TensorTest::test()
+bool TensorTest::test_operator_plus() const
 {
-  // testing: operator()
+  Tensor3D addend3D { tensor.copySubspace(0) };
 
-  console.log("*** testing: operator()");
-
-  BatchTensor batch { std::vector<Tensor::NeuronType>(32, 0), {1, 4, 4, 2} };
-
-  batch(0, 1, 2, 0) = 1;
-
-  console.log(batch(0, 1, 2, 0));
-
-  // testing: copyDepth
-
-  console.log("*** testing: copyDepth");
-
-  batch(0, 3, 3, 0) = 4;
-  batch(0, 3, 3, 1) = 8;
-
-  Tensor1D depth { batch.copySubspace(0, 3, 3) };
-
-  console.log(std::to_string(depth[0]) + ", " + std::to_string(depth[1]));
-
-  // testing: transpose_width_depth (in debugger -> Locals)
-
-  console.log("*** testing: transpose_width_depth", true);
-
-  BatchTensor images {  Tensor::vectorNeuronType {
-
-                        1, 2,    3, 4,     5, 6,
-                        7, 8,    9, 10,    11, 12,
-                        13, 14,  15, 16,   17, 18,
-                        19, 20,  21, 22,   23, 24,
-
-                        100, 200,    300, 400,     500, 600,
-                        700, 800,    900, 1000,    1100, 1200,
-                        1300, 1400,  1500, 1600,   1700, 1800,
-                        1900, 2000,  2100, 2200,   2300, 2400
-
-                      }, { 2, 4, 3, 2 } };
-
-  console.log("before transposition (0, 3, 0, 1): " +
-              std::to_string(images(0, 3, 0, 1)));
-
-  images.transpose_width_depth();
-
-  console.log("after transposition (0, 3, 1, 0): " +
-              std::to_string(images(0, 3, 1, 0)));
-
-  console.log("*** matrix multiplication", true);
-
-  Tensor2D left   { images.copySubspace(0, 0) };
-  Tensor2D right  { images.copySubspace(0, 1) };
-
-  // left and right have to be multipliable
-  right.transpose_width_depth();
-
-  Tensor2D activation { left * right };
-
-  console.log("first dot product of images(0, 0) and images(0, 1)");
-  console.log("we assume it is an example input tensor * filters");
-  console.log(std::to_string(left[0]) + " * " +
-              std::to_string(right[0]) + " + " +
-              std::to_string(left[3])  + " * " +
-              std::to_string(right[2]) + " = " +
-              std::to_string(activation[0]));
-
-  // reshaping back into Tensor3D
-
-  size_t dimension { static_cast<size_t>(std::sqrt(activation.copyWidth())) };
-
-  Tensor3D activation_image {
-    activation.readValues(),
-    { dimension, dimension, activation.copyDepth() }
+  Tensor1D addend1D {
+    { 10000, 20000 },
+    { 2 }
   };
-
-  console.log("plane matrix is reshaped back into a 3D activation tensor");
-  console.log("of dimensions: (" + std::to_string(activation_image.copyHeight()) +
-              ", " + std::to_string(activation_image.copyWidth()) +
-              ", " + std::to_string(activation_image.copyDepth()) +
-              ")");
-
-  // testing: BatchTensor::pad -> cascades Tensor3D::pad -> Tensor2D
-
-  console.log("**** BatchTensor::pad", true);
-
-  BatchTensor two_images  { Tensor::vectorNeuronType {
-
-                            1, 2,    3, 4,     5, 6,
-                            7, 8,    9, 10,    11, 12,
-                            13, 14,  15, 16,   17, 18,
-
-                            100, 200,    300, 400,     500, 600,
-                            700, 800,    900, 1000,    1100, 1200,
-                            1300, 1400,  1500, 1600,   1700, 1800
-
-                          }, {2, 3, 3, 2} };
-
-  two_images.pad(1);
-
-  console.log("First few pixels:");
-
-  for (int i = 0; i < 2; i++)
-  {
-    console.log("two_images(0, 0, 0, " + std::to_string(i) +
-                "): " + std::to_string(two_images(0, 0, 0, i)));
-  }
-
-  for (int i = 0; i < 2; i++)
-  {
-    console.log("two_images(0, 0, 1, " + std::to_string(i) +
-                "): " + std::to_string(two_images(0, 0, 1, i)));
-  }
-
-  for (int i = 0; i < 2; i++)
-  {
-    console.log("two_images(0, 1, 1, " + std::to_string(i) +
-                "): " + std::to_string(two_images(0, 1, 1, i)));
-  }
-
-  // testing: Tensor3D::subcube
-
-  console.log("**** BatchTensor::copySubcube", true);
-
-  Tensor3D first { two_images.copySubcube(0, 0, 3, 0, 3) };
-
-  console.log("copySubcube(0, 0, 3, 0, 3) -> first depth:");
-
-  for (int i = 0; i < first.copyDepth(); i++)
-  {
-    console.log(first.readValues()[i]);
-  }
-
-  Tensor3D second { two_images.copySubcube(0, 1, 2, 1, 2) };
-
-  console.log("copySubcube(0, 1, 2, 1, 2) -> second depth:");
-
-  for (int i = 0; i < second.copyDepth(); i++)
-  {
-    console.log(second.readValues()[i]);
-  }
-
-  // try
-  // {
-  //   console.log("copySubcube(0, INT_MAX, 2, 0, 2) -> first depth:");
-  //   two_images.copySubcube(0, INT_MAX, 2, 0, 2);
-  // }
-  // catch (int ex)
-  // {
-  //   console.log("caught exception for cube overflow");
-  // }
-
-  // testing: Tensor3D::operator+(Vector1)
-
-  console.log("**** Tensor3D::operator+(Vector1)", true);
-
-  Tensor3D addend3D { {
-
-                      1, 2, 3, 4, 5, 6,
-
-                      7, 8, 9, 10, 11, 12
-
-                    }, { 2, 3, 2 } };
-
-  Tensor1D addend1D { { 1, 100 }, { 2 } };
 
   Tensor3D sum { addend3D + addend1D };
 
-  console.log("addend3D + addend1D (first two depths):");
+  for (size_t h = 0; h < sum.copyHeight(); h++)
+  {
+    for (size_t w = 0; w < sum.copyWidth(); w++)
+    {
+      if (sum(h, w, 0) < 10000)
+      {
+        return true;
+      }
 
-  console.log(
+      if (sum(h, w, 1) < 20000)
+      {
+        return true;
+      }
+    }
+  }
 
-    std::to_string(sum[0]) + ", " +
-    std::to_string(sum[1]) + ", " +
-    std::to_string(sum[2]) + ", " +
-    std::to_string(sum[3])
-    );
+  return false;
+}
+
+//*****************************************************************************
+
+bool TensorTest::test_subcube() const
+{
+  Tensor3D subcube { tensor.copySubcube(0, 1, 2, 1, 2) };
+
+  for (size_t d = 0; d < subcube.copyDepth(); d++)
+  {
+    Tensor1D depth { tensor.copySubspace(0, 1, 1) };
+
+    if (depth[d] != subcube(0, 0, d))
+    {
+      return true;
+    }
+  }
+
+  Tensor3D heightSubcube { tensor.copySubcube(0, 0, INT_MAX, 0, 2) };
+
+  if (heightSubcube.copyHeight() != tensor.copyHeight())
+  {
+    return true;
+  }
+
+  return false;
+}
+
+//*****************************************************************************
+
+bool TensorTest::test_pad() const
+{
+  BatchTensor unit { tensor };
+
+  unit.pad(1, 999);
+
+  if (unit.copyHeight() != tensor.copyHeight() + 2)
+  {
+    return true;
+  }
+
+  if (unit.copyWidth() != tensor.copyWidth() + 2)
+  {
+    return true;
+  }
+
+  for (size_t b = 0; b < unit.copyBatchSize(); b++)
+  {
+    for (size_t h = 0; h < unit.copyHeight(); h++)
+    {
+      if (0 < h && h < unit.copyHeight() - 1)
+      {
+        continue;
+      }
+
+      for (size_t w = 0; w < unit.copyWidth(); w++)
+      {
+        if (0 < w && w < unit.copyWidth() - 1)
+        {
+          continue;
+        }
+
+        for (size_t d = 0; d < unit.copyDepth(); d++)
+        {
+          if (unit(b, h, w, d) != 999)
+          {
+            return true;
+          }
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
+//*****************************************************************************
+
+bool TensorTest::test_operator_8() const
+{
+  Tensor2D left   { tensor.copySubspace(0, 0) };
+  Tensor2D right  { tensor.copySubspace(0, 1) };
+
+  // left and right have to be multipliable
+
+  left.transpose_width_depth();
+
+  Tensor2D activation { left * right };
+
+  Tensor::NeuronType dotProduct
+    {
+      left(0, 0) * right(0, 0) +
+      left(1, 0) * right(0, 1)
+    };
+
+  if (dotProduct != activation(0, 0))
+  {
+    return true;
+  }
+
+  return false;
+}
+
+//*****************************************************************************
+
+bool TensorTest::test_transpose_width_depth() const
+{
+  BatchTensor unit { tensor };
+
+  unit.transpose_width_depth();
+
+  return tensor(0, 3, 0, 1) != unit(0, 3, 1, 0);
+}
+
+//*****************************************************************************
+
+bool TensorTest::test_copy_subspace() const
+{
+  BatchTensor unit { tensor };
+
+  unit(0, 3, 2, 0) = 4;
+  unit(0, 3, 2, 1) = 8;
+
+  Tensor1D depth { unit.copySubspace(0, 3, 2) };
+
+  if (depth.size() != tensor.copyDepth())
+  {
+    return true;
+  }
+
+  if (depth(0) != 4)
+  {
+    return true;
+  }
+
+  if (depth(1) != 8)
+  {
+    return true;
+  }
+
+  return false;
+}
+
+//*****************************************************************************
+
+bool TensorTest::test_operator_90() const
+{
+  BatchTensor unit { tensor };
+
+  unit(0, 1, 2, 0) = 999999;
+
+  return tensor(0, 1, 2, 0) == unit(0, 1, 2, 0);
+}
+
+//*****************************************************************************
+
+void TensorTest::test()
+{
+  console.log("*** testing: class Tensor", true);
+
+  console.log("testing: " + boolToFail(test_operator_90()) + "\t for: operator()");
+  console.log("testing: " + boolToFail(test_copy_subspace()) + "\t for: copySubspace()");
+  console.log("testing: " + boolToFail(test_transpose_width_depth()) + "\t for: transpose_width_depth()");
+  console.log("testing: " + boolToFail(test_operator_8()) + "\t for: test_operator_8()");
+  console.log("testing: " + boolToFail(test_pad()) + "\t for: test_pad()");
+  console.log("testing: " + boolToFail(test_subcube()) + "\t for: test_subcube()");
+  console.log("testing: " + boolToFail(test_operator_plus()) + "\t for: test_operator_plus()");
 
 }

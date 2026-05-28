@@ -99,24 +99,36 @@ BatchTensor::BatchTensor(vectorNeuronType values, vectorSizeT dims)
 
 //*****************************************************************************
 
+Tensor::NeuronType const& BatchTensor::operator()(size_t batchIndex,
+                                                  size_t heightIndex,
+                                                  size_t widthIndex,
+                                                  size_t depthIndex) const
+{
+  if (batchIndex >= batchSize)
+  {
+    throw 1;
+  }
+
+  batchIndex *= Tensor3D::size();
+
+  return Tensor3D::operator()(batchIndex + heightIndex, widthIndex, depthIndex);
+}
+
+//*****************************************************************************
+
 Tensor::NeuronType& BatchTensor::operator()(size_t batchIndex,
                                             size_t heightIndex,
                                             size_t widthIndex,
                                             size_t depthIndex)
 {
-  if (batchIndex  > batchSize   ||
-      heightIndex > height      ||
-      widthIndex  > width       ||
-      depthIndex  > depth)
+  if (batchIndex >= batchSize)
   {
     throw 1;
   }
 
-  batchIndex  *= this->Tensor3D::size();
-  heightIndex *= this->Tensor2D::size();
-  widthIndex  *= this->Tensor1D::size();
+  batchIndex *= Tensor3D::size();
 
-  return values[batchIndex + heightIndex + widthIndex + depthIndex];
+  return Tensor3D::operator()(heightIndex, widthIndex, depthIndex, batchIndex);
 }
 
 //*****************************************************************************

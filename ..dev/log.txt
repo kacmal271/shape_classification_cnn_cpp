@@ -102,7 +102,7 @@ Pool
 		
 		Tensor3D.pool(int (*) (int))
 
-	for h = 0; h += step 
+	for h = 0; h += step
 	
 		for w = 0; w += step
 		

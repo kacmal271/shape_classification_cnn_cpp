@@ -16,11 +16,42 @@ class Tensor2D : public Tensor1D
     // visibility for: Tensor2D
     using Tensor1D::copyDepth;
 
+    Tensor2D() = default;
+
     Tensor2D(vectorNeuronType values, vectorSizeT dims);
 
+    ///
+    /// \brief operator * Matrix multiplication
+    ///
+    /// Left matrix is parsed width-by-width
+    ///
+    /// -> first neuron is in front-top on the left
+    ///
+    /// -> second neuron is front-top to the right of the first
+    ///
+    /// Right matrix is parsed depth-by-depth
+    ///
+    /// \param right
+    ///
+    /// \return Tensor2D Result of matrix multiplication
+    ///
+    /// \note Matrices are horizontal planes (x-z)
+    ///
+    /// not vertical like we are used to in mathematics
+    ///
+    /// this is due to Tensorflow-indexing style: BHWD
+    ///
     Tensor2D operator*(Tensor2D const & right) const;
 
     Tensor2D operator+(Tensor1D const & vector) const;
+
+    NeuronType const& operator()(size_t widthIndex,
+                                 size_t depthIndex,
+                                 size_t offset = 0) const;
+
+    NeuronType& operator()(size_t widthIndex,
+                           size_t depthIndex,
+                           size_t offset = 0);
 
     size_t size() const override;
 

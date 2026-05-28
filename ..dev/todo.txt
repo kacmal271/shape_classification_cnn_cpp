@@ -1,3 +1,4 @@
+shape classification cnn cpp todo
 
 ///////////////////////////////////////////////////////////////////////////////
 // RESOURCES
@@ -8,16 +9,59 @@
 		
 		one note
 		
-		33:06
+		45:00
+		
+		forward()
+			for (auto layer : layers)
+				layer.forward()
+			return loss
+				
+		backward()
+			for (auto layer : layers)
+				layer.backward()
+			return layers_with_updated_parameters
+		
+		class MultiplicationLayer()
+			initialize(hiperparameters)
+				generate filters with starting values
+				use hiperparameters for that !
+		
+			forward(x, y)
+				z = x * y
+				self.x = x # must keep these around !
+				self.y = y # this we CACHE too
+				return z
+			
+			backward(dz)
+				dx = self.y * dz # dz/dx * dL/dz
+				dy = self.x * dz # dz/dy * dL/dz
+				return [dx, dy]
+		
+		Torch vs PyTorch
+		https://stackoverflow.com/questions/44371560/what-is-the-relationship-between-pytorch-and-torch#answer-75836941
+		
+		tensor = n-dim array
+		
+		blob => some call tensors "blobs"
+		
+		diff => some call gradients "diffs"
+		
+		jacobian: first derivatives matrix
+		* rows -> functions
+		* columns -> variables
+		
+			stores information of how each variable
+			influences each function's growth
+			ex. df/dx = 100/1 = 100 -> small change in x is huge change in f
 
-[-] backprop for CONV layer: https://www.youtube.com/watch?v=njlyOAiK_yE
+[+] backprop for CONV layer: https://www.youtube.com/watch?v=njlyOAiK_yE
 		there isnt a backprop for POOL or for NORM
 		
 		backprop is also a convolution -> to calculate partial derivatives
 		then: parameter - lr * partial derivative
 		
 		Conv Layer -> Feed Forward -> activation tensor
-		Conv Layer -> Backprop -> dilute activation tensor by step size -> Full Convolution
+		Conv Layer -> Backpropagation -> dilute activation tensor by step size -> Full Convolution
 			step size = 1 => no dilution
 			perform Full Convolution (convolution without cropping/extending edges)
 
@@ -83,18 +127,24 @@
 				depth += Tensor1D
 				empty.replaceAt(y, x)
 	
-	[-] Tensors should implement operator()
+	[+] Tensors should implement operator()
 	
-	[-] Tests return bool
+	[+] Tests return bool
+	
+	[+] class Operation
+			manages input and output tensors
+			
+	[+] class Layer
+			manages local gradients
 	
 	[-] Conv : Layer
 			Conv::filters -> BatchTensor {}
 			
-			tensor = Conv(tensor)
-			tensor = Pool(tensor) ...
+			Conv::forward(BatchTensor)
+				
+			private: Conv::convolve(Tensor3D)
 			
-			Conv::convolve(BatchTensor)
-			private: Conv::convolve_one(Tensor3D)
+			Conv::backward(NeuronType)
 			
 			create Tensor3D with dims: { 1, 12, 50176 }
 			transpose_width_depth => { 1, 50176, 12 }
@@ -114,14 +164,18 @@
 			
 	[-] ConvNet
 			ConvNet::ConvNet(initializer_list<Layer*>)
-			ConvNet::feedForward() -> std::vector<double>
-			ConvNet::backprop()
+			ConvNet::forward() -> double loss
+				tensor = Conv(tensor)
+				tensor = Pool(tensor) ...
+			ConvNet::backward() -> std::vector<Layers*>
+				tensor = Pool(neuron_value)
+				tensor = Conv(neuron_value) ...
 			ConvNet::optimize() -> void
 				while(batch iterations)
-				feedForward()
-				backprop()
+				forward()
+				backward()
 			ConvNet::classify() -> std::vector<double>
-				wrapper for 1x feedForward
+				similar to forward() but doesnt calculate gradients
 			ConvNet::serialize("./parameters.csv") // saving parameters in file (space " " delim)
 			ConvNet::deserialize("./parameters.csv")
 			

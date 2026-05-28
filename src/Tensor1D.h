@@ -12,9 +12,17 @@ class Tensor1D : public Tensor
 
   public:
 
+    Tensor1D() = default;
+
     Tensor1D(vectorNeuronType values, vectorSizeT dims);
 
     Tensor1D operator+(Tensor1D const & vector) const;
+
+    NeuronType const& operator()(size_t depthIndex,
+                                 size_t offset = 0) const;
+
+    NeuronType& operator()(size_t depthIndex,
+                           size_t offset = 0);
 
     size_t size() const override;
 

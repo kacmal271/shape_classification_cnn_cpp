@@ -16,9 +16,21 @@ class Tensor3D : public Tensor2D
     // visibility for: Tensor3D, BatchTensor
     using Tensor1D::copyDepth;
 
+    Tensor3D() = default;
+
     Tensor3D(vectorNeuronType values, vectorSizeT dims);
 
     Tensor3D operator+(Tensor1D const & vector) const;
+
+    NeuronType const& operator()(size_t heightIndex,
+                                 size_t widthIndex,
+                                 size_t depthIndex,
+                                 size_t offset = 0) const;
+
+    NeuronType& operator()(size_t heightIndex,
+                           size_t widthIndex,
+                           size_t depthIndex,
+                           size_t offset = 0);
 
     void transpose_width_depth() override;
 

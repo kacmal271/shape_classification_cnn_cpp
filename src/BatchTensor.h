@@ -14,7 +14,14 @@ class BatchTensor : public Tensor3D
 
   public:
 
+    BatchTensor() = default;
+
     BatchTensor(vectorNeuronType values, vectorSizeT dims);
+
+    NeuronType const& operator()(size_t batchIndex,
+                                 size_t heightIndex,
+                                 size_t widthIndex,
+                                 size_t depthIndex) const;
 
     NeuronType& operator()(size_t batchIndex,
                            size_t heightIndex,

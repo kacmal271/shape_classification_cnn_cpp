@@ -2,6 +2,32 @@
 
 //*****************************************************************************
 
+Tensor::NeuronType const& Tensor1D::operator()(size_t depthIndex,
+                                               size_t offset) const
+{
+  if (depthIndex >= depth)
+  {
+    throw 1;
+  }
+
+  return operator[](depthIndex + offset);
+}
+
+//*****************************************************************************
+
+Tensor::NeuronType& Tensor1D::operator()(size_t depthIndex,
+                                         size_t offset)
+{
+  if (depthIndex >= depth)
+  {
+    throw 1;
+  }
+
+  return operator[](depthIndex + offset);
+}
+
+//*****************************************************************************
+
 Tensor1D Tensor1D::operator+(Tensor1D const & vector) const
 {
   if ( ! isDepthCompatible(vector))

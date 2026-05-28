@@ -8,15 +8,25 @@ inline void test(Testing::UnitTest *_test)
 {
   try
   {
-
     _test->test();
   }
   catch (int ex)
   {
-    if (ex == 2)
+    switch (ex)
     {
-      console.log("(!) SOME FEATURE IS NOT IMPLEMENTED");
+      case 2:
+
+        console.log("(!) SOME FEATURE IS NOT IMPLEMENTED");
+        break;
+
+      case 1:
+
+        console.log("(!) LOGIC ERROR");
+        break;
+
     }
+
+    delete _test;
   }
 
   delete _test;

@@ -2,6 +2,40 @@
 
 //*****************************************************************************
 
+Tensor::NeuronType const& Tensor3D::operator()(size_t heightIndex,
+                                               size_t widthIndex,
+                                               size_t depthIndex,
+                                               size_t offset) const
+{
+  if (heightIndex >= height)
+  {
+    throw 1;
+  }
+
+  heightIndex *= Tensor2D::size();
+
+  return Tensor2D::operator()(widthIndex, depthIndex, offset + heightIndex);
+}
+
+//*****************************************************************************
+
+Tensor::NeuronType& Tensor3D::operator()(size_t heightIndex,
+                                         size_t widthIndex,
+                                         size_t depthIndex,
+                                         size_t offset)
+{
+  if (heightIndex >= height)
+  {
+    throw 1;
+  }
+
+  heightIndex *= Tensor2D::size();
+
+  return Tensor2D::operator()(widthIndex, depthIndex, offset + heightIndex);
+}
+
+//*****************************************************************************
+
 Tensor3D Tensor3D::operator+(Tensor1D const & vector) const
 {
   if ( ! isDepthCompatible(vector))

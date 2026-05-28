@@ -2,6 +2,38 @@
 
 //*****************************************************************************
 
+Tensor::NeuronType const& Tensor2D::operator()(size_t widthIndex,
+                                               size_t depthIndex,
+                                               size_t offset) const
+{
+  if (widthIndex >= width)
+  {
+    throw 1;
+  }
+
+  widthIndex *= Tensor1D::size();
+
+  return Tensor1D::operator()(depthIndex, offset + widthIndex);
+}
+
+//*****************************************************************************
+
+Tensor::NeuronType& Tensor2D::operator()(size_t widthIndex,
+                                         size_t depthIndex,
+                                         size_t offset)
+{
+  if (widthIndex >= width)
+  {
+    throw 1;
+  }
+
+  widthIndex *= Tensor1D::size();
+
+  return Tensor1D::operator()(depthIndex, offset + widthIndex);
+}
+
+//*****************************************************************************
+
 void Tensor2D::replaceAt(size_t widthIndex, Tensor1D const & vector)
 {
   if ( ! isDepthCompatible(vector))

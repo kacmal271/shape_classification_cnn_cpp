@@ -36,7 +36,7 @@ void Tensor::fit(size_t & dimension,
 
 Tensor::NeuronType const & Tensor::operator[] (size_t index) const
 {
-  if (index < 0 || index > values.size())
+  if (index >= values.size())
   {
     throw 1;
   }

@@ -1,10 +1,7 @@
 #ifndef UNITTEST_H
 #define UNITTEST_H
 
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-///
-/// UnitTest
+#include <string>
 
 namespace Testing
 {
@@ -15,6 +12,8 @@ namespace Testing
       virtual void test() = 0;
 
       virtual ~UnitTest() = default;
+
+      std::string boolToFail(bool isFail);
   };
 }
 

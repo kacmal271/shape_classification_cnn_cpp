@@ -20,6 +20,8 @@ class Tensor
 
   public:
 
+    Tensor() = default;
+
     Tensor(vectorNeuronType values) : values(values) {};
 
     // required by: std::unique_ptr
