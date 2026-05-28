@@ -2,6 +2,43 @@
 
 //*****************************************************************************
 
+void Tensor2D::replaceAt(size_t widthIndex, Tensor1D const & vector)
+{
+  if ( ! isDepthCompatible(vector))
+  {
+    throw 2;
+  }
+
+  Extended::Vector::replace(
+    values,
+    widthIndex * Tensor1D::size(),
+    widthIndex * Tensor1D::size() + Tensor1D::size(),
+    vector.readValues());
+}
+
+//*****************************************************************************
+
+Tensor2D Tensor2D::operator+(Tensor1D const & vector) const
+{
+  if ( ! isDepthCompatible(vector))
+  {
+    throw 1;
+  }
+
+  Tensor2D incremented { *this };
+
+  for (size_t x = 0; x < width; x++)
+  {
+    Tensor1D incremented_depth { copyDepth(x) + vector };
+
+    incremented.replaceAt(x, incremented_depth);
+  }
+
+  return incremented;
+}
+
+//*****************************************************************************
+
 bool Tensor2D::isSubspace(size_t x, size_t width, size_t z, size_t depth) const
 {
   return 0 <= x && x + width <= this->width &&

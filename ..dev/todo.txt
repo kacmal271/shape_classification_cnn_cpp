@@ -5,9 +5,21 @@
 [-] backprop 1: https://pavisj.medium.com/convolutions-and-backpropagations-46026a8f5d2c
 
 [-] backprop 2: https://www.youtube.com/watch?v=i94OvYb6noo
+		
+		one note
+		
+		33:06
 
 [-] backprop for CONV layer: https://www.youtube.com/watch?v=njlyOAiK_yE
 		there isnt a backprop for POOL or for NORM
+		
+		backprop is also a convolution -> to calculate partial derivatives
+		then: parameter - lr * partial derivative
+		
+		Conv Layer -> Feed Forward -> activation tensor
+		Conv Layer -> Backprop -> dilute activation tensor by step size -> Full Convolution
+			step size = 1 => no dilution
+			perform Full Convolution (convolution without cropping/extending edges)
 
 [-] backprop in python: https://github.com/vcoz17/Back-Propagation-in-CNN/blob/master/backpropagation_in_cnn.py
 		important: def loss, def train
@@ -65,11 +77,15 @@
 	[+] Tensor3D Tensor3D::subcube(...)
 			catch (int) console.log("unimplemented")
 			
-	[-]	adding bias vector
+	[+]	adding bias vector
 			Tensor3D.operator+(Tensor1D)
 				depth = copyDepth(y, x)
 				depth += Tensor1D
 				empty.replaceAt(y, x)
+	
+	[-] Tensors should implement operator()
+	
+	[-] Tests return bool
 	
 	[-] Conv : Layer
 			Conv::filters -> BatchTensor {}

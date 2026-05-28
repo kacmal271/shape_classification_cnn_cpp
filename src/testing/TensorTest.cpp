@@ -31,19 +31,19 @@ void TensorTest::test()
 
   console.log("*** testing: transpose_width_depth", true);
 
-  BatchTensor images { Tensor::vectorNeuronType {
+  BatchTensor images {  Tensor::vectorNeuronType {
 
-                       1, 2,    3, 4,     5, 6,
-                       7, 8,    9, 10,    11, 12,
-                       13, 14,  15, 16,   17, 18,
-                       19, 20,  21, 22,   23, 24,
+                        1, 2,    3, 4,     5, 6,
+                        7, 8,    9, 10,    11, 12,
+                        13, 14,  15, 16,   17, 18,
+                        19, 20,  21, 22,   23, 24,
 
-                       100, 200,    300, 400,     500, 600,
-                       700, 800,    900, 1000,    1100, 1200,
-                       1300, 1400,  1500, 1600,   1700, 1800,
-                       1900, 2000,  2100, 2200,   2300, 2400
+                        100, 200,    300, 400,     500, 600,
+                        700, 800,    900, 1000,    1100, 1200,
+                        1300, 1400,  1500, 1600,   1700, 1800,
+                        1900, 2000,  2100, 2200,   2300, 2400
 
-                     }, {2, 4, 3, 2} };
+                      }, { 2, 4, 3, 2 } };
 
   console.log("before transposition (0, 3, 0, 1): " +
               std::to_string(images(0, 3, 0, 1)));
@@ -139,21 +139,47 @@ void TensorTest::test()
 
   Tensor3D second { two_images.copySubcube(0, 1, 2, 1, 2) };
 
-  console.log("copySubcube(0, 1, 2, 1, 2) -> first depth:");
+  console.log("copySubcube(0, 1, 2, 1, 2) -> second depth:");
 
   for (int i = 0; i < second.copyDepth(); i++)
   {
     console.log(second.readValues()[i]);
   }
 
-  try
-  {
-    console.log("copySubcube(0, INT_MAX, 2, 0, 2) -> first depth:");
-    two_images.copySubcube(0, INT_MAX, 2, 0, 2);
-  }
-  catch (int ex)
-  {
-    console.log("caught exception for cube overflow");
-  }
+  // try
+  // {
+  //   console.log("copySubcube(0, INT_MAX, 2, 0, 2) -> first depth:");
+  //   two_images.copySubcube(0, INT_MAX, 2, 0, 2);
+  // }
+  // catch (int ex)
+  // {
+  //   console.log("caught exception for cube overflow");
+  // }
+
+  // testing: Tensor3D::operator+(Vector1)
+
+  console.log("**** Tensor3D::operator+(Vector1)", true);
+
+  Tensor3D addend3D { {
+
+                      1, 2, 3, 4, 5, 6,
+
+                      7, 8, 9, 10, 11, 12
+
+                    }, { 2, 3, 2 } };
+
+  Tensor1D addend1D { { 1, 100 }, { 2 } };
+
+  Tensor3D sum { addend3D + addend1D };
+
+  console.log("addend3D + addend1D (first two depths):");
+
+  console.log(
+
+    std::to_string(sum[0]) + ", " +
+    std::to_string(sum[1]) + ", " +
+    std::to_string(sum[2]) + ", " +
+    std::to_string(sum[3])
+    );
 
 }

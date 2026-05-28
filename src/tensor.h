@@ -40,6 +40,9 @@ class Tensor
     vectorNeuronType::iterator begin();
     vectorNeuronType::iterator end();
 
+    vectorNeuronType::const_iterator begin() const;
+    vectorNeuronType::const_iterator end() const;
+
 };
 
 #endif // TENSOR_H

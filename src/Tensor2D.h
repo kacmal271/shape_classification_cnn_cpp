@@ -18,23 +18,27 @@ class Tensor2D : public Tensor1D
 
     Tensor2D(vectorNeuronType values, vectorSizeT dims);
 
-    Tensor2D operator* (Tensor2D const & right) const;
+    Tensor2D operator*(Tensor2D const & right) const;
+
+    Tensor2D operator+(Tensor1D const & vector) const;
 
     size_t size() const override;
 
-    Tensor1D copyDepth(size_t widthIndex) const;
-
     size_t copyWidth() const;
 
-    Tensor2D copySubplane(size_t x, size_t width, size_t z, size_t depth) const;
-
     bool isSubspace(size_t x, size_t width, size_t z, size_t depth) const;
+
+    Tensor1D copyDepth(size_t widthIndex) const;
+
+    Tensor2D copySubplane(size_t x, size_t width, size_t z, size_t depth) const;
 
     Tensor1D copySubdepth(size_t z, size_t depth) const = delete;
 
     Tensor::NeuronType dot(Tensor1D const & right) const = delete;
 
     virtual void transpose_width_depth();
+
+    void replaceAt(size_t widthIndex, Tensor1D const & vector);
 
     void pad(size_t count, NeuronType value = NeuronType {});
 

@@ -2,6 +2,27 @@
 
 //*****************************************************************************
 
+Tensor3D Tensor3D::operator+(Tensor1D const & vector) const
+{
+  if ( ! isDepthCompatible(vector))
+  {
+    throw 1;
+  }
+
+  Tensor3D incremented { *this };
+
+  for (size_t y = 0; y < height; y++)
+  {
+    Tensor2D incremented_plane { copyPlane(y) + vector };
+
+    incremented.replaceAt(y, incremented_plane);
+  }
+
+  return incremented;
+}
+
+//*****************************************************************************
+
 bool Tensor3D::isSubspace(size_t y, size_t height,
                           size_t x, size_t width,
                           size_t z, size_t depth) const

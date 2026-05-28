@@ -18,6 +18,8 @@ class Tensor3D : public Tensor2D
 
     Tensor3D(vectorNeuronType values, vectorSizeT dims);
 
+    Tensor3D operator+(Tensor1D const & vector) const;
+
     void transpose_width_depth() override;
 
     size_t size() const override;

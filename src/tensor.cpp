@@ -2,6 +2,20 @@
 
 //*****************************************************************************
 
+Tensor::vectorNeuronType::const_iterator Tensor::begin() const
+{
+  return values.cbegin();
+}
+
+//*****************************************************************************
+
+Tensor::vectorNeuronType::const_iterator Tensor::end() const
+{
+  return values.cend();
+}
+
+//*****************************************************************************
+
 void Tensor::fit(size_t & dimension,
                  size_t tensor_dimension,
                  size_t tensor_dimension_offset) const

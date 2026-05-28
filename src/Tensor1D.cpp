@@ -2,6 +2,25 @@
 
 //*****************************************************************************
 
+Tensor1D Tensor1D::operator+(Tensor1D const & vector) const
+{
+  if ( ! isDepthCompatible(vector))
+  {
+    throw 1;
+  }
+
+  Tensor1D incremented { *this };
+
+  for (size_t z = 0; z < depth; z++)
+  {
+    incremented[z] += vector[z];
+  }
+
+  return incremented;
+}
+
+//*****************************************************************************
+
 bool Tensor1D::isSubspace(size_t z, size_t depth) const
 {
   return 0 <= z && z + depth <= this->depth;

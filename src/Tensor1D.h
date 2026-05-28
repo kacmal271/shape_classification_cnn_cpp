@@ -14,6 +14,8 @@ class Tensor1D : public Tensor
 
     Tensor1D(vectorNeuronType values, vectorSizeT dims);
 
+    Tensor1D operator+(Tensor1D const & vector) const;
+
     size_t size() const override;
 
     size_t copyDepth() const;
